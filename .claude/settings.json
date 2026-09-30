@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "deny": [
+      "Edit(../resumatch/**)",
+      "Write(../resumatch/**)",
+      "Edit(../reversegram-game/**)",
+      "Write(../reversegram-game/**)"
+    ]
+  }
+}

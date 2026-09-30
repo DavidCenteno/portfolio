@@ -1,0 +1,233 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* ---------- Tokens ---------- */
+:root {
+  --bg: #0b0b0a;
+  --bg-raised: #121211;
+  --bg-sunken: #070706;
+  --fg: #edece6;
+  --fg-muted: #a3a198;
+  --fg-faint: #8a887f;
+  --line: rgb(237 236 230 / 0.08);
+  --line-strong: rgb(237 236 230 / 0.16);
+  --accent: #c6f432;
+  --accent-fill: #c6f432;
+  --accent-ink: #0b0b0a;
+  --accent-soft: rgb(198 244 50 / 0.1);
+  --glow: rgb(198 244 50 / 0.16);
+  --grid-dot: rgb(237 236 230 / 0.07);
+  --shadow-card: 0 1px 0 rgb(255 255 255 / 0.03) inset, 0 30px 60px -30px rgb(0 0 0 / 0.6);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  --bg: #f5f4ee;
+  --bg-raised: #ffffff;
+  --bg-sunken: #ebe9e1;
+  --fg: #141412;
+  --fg-muted: #57554e;
+  --fg-faint: #69675f;
+  --line: rgb(20 20 18 / 0.09);
+  --line-strong: rgb(20 20 18 / 0.18);
+  --accent: #3d6b00;
+  --accent-fill: #c6f432;
+  --accent-ink: #141412;
+  --accent-soft: rgb(61 107 0 / 0.08);
+  --glow: rgb(150 200 20 / 0.22);
+  --grid-dot: rgb(20 20 18 / 0.08);
+  --shadow-card: 0 1px 2px rgb(20 20 18 / 0.04), 0 24px 48px -28px rgb(20 20 18 / 0.25);
+  color-scheme: light;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-raised: var(--bg-raised);
+  --color-sunken: var(--bg-sunken);
+  --color-fg: var(--fg);
+  --color-muted: var(--fg-muted);
+  --color-faint: var(--fg-faint);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
+  --color-accent-fill: var(--accent-fill);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SFMono-Regular", monospace;
+  --font-display: var(--font-instrument), Georgia, serif;
+  --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ---------- Base ---------- */
+html {
+  background: var(--bg);
+  color: var(--fg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  scroll-padding-top: 5rem;
+}
+
+body {
+  background: var(--bg);
+  font-family: var(--font-sans);
+  font-feature-settings: "ss01", "cv11";
+  overflow-x: clip;
+}
+
+::selection {
+  background: var(--accent-fill);
+  color: var(--accent-ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Lenis */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* ---------- Texture ---------- */
+.bg-grid {
+  background-image: radial-gradient(var(--grid-dot) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.noise::after {
+  content: "";
+  position: fixed;
+  inset: -50%;
+  pointer-events: none;
+  z-index: 100;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+:root[data-theme="light"] .noise::after {
+  opacity: 0.05;
+}
+
+/* Cursor-follow spotlight used by <Spotlight> */
+.spotlight {
+  position: relative;
+  isolation: isolate;
+}
+.spotlight::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 400ms var(--ease-out);
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), var(--glow), transparent 60%);
+  z-index: -1;
+}
+.spotlight:hover::before {
+  opacity: 1;
+}
+
+/* Hairline gradient border for cards */
+.hairline {
+  border: 1px solid var(--line);
+  background:
+    linear-gradient(var(--bg-raised), var(--bg-raised)) padding-box,
+    linear-gradient(180deg, var(--line-strong), var(--line)) border-box;
+  border-color: transparent;
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+.text-pretty {
+  text-wrap: pretty;
+}
+
+/* Hero entrance: pure CSS so it starts at first paint, before hydration (keeps LCP low). */
+@keyframes rise {
+  from { transform: translateY(105%); }
+}
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(16px); }
+}
+.hero-word {
+  animation: rise 0.85s var(--ease-out) both;
+}
+.hero-fade {
+  animation: fade-up 0.8s var(--ease-out) both;
+}
+
+/* Marquee */
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+.animate-marquee {
+  animation: marquee 40s linear infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { box-shadow: 0 0 0 0 var(--glow); }
+  50% { box-shadow: 0 0 0 6px transparent; }
+}
+.pulse-dot {
+  animation: pulse-dot 2.4s var(--ease-out) infinite;
+}
+
+@keyframes glow {
+  0%, 100% { transform: scale(0.85); opacity: 0.7; }
+  50% { transform: scale(1.1); opacity: 1; }
+}
+.pulse-glow {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: glow 3.2s ease-in-out infinite;
+}
+
+@keyframes caret {
+  50% { opacity: 0; }
+}
+.caret {
+  animation: caret 1s steps(1) infinite;
+}
+
+/* Theme switch cross-fade via View Transitions */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Flowing dashes on architecture diagrams */
+@keyframes dash-flow {
+  to { stroke-dashoffset: -24; }
+}
+.dash-flow {
+  stroke-dasharray: 4 8;
+  animation: dash-flow 1.2s linear infinite;
+}
